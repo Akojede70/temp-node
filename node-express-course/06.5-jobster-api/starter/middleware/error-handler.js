@@ -11,18 +11,24 @@ const errorHandlerMiddleware = (err, req, res, next) => {
   // }
 
   if (err.name === 'ValidationError') {
+    // his condition checks if the error is a Mongoose Validation Error 
+    // (typically thrown by MongoDB when model validation fails).
     customError.msg = Object.values(err.errors)
       .map((item) => item.message)
       .join(',')
     customError.statusCode = 400
   }
   if (err.code && err.code === 11000) {
+    // This error occurs when a unique field in a document 
+    // (e.g., email) tries to store a value that already exists in the database.
     customError.msg = `Duplicate value entered for ${Object.keys(
       err.keyValue
     )} field, please choose another value`
     customError.statusCode = 400
   }
   if (err.name === 'CastError') {
+    // This handles cases where an invalid ObjectId or data format is u
+    // sed in MongoDB queries (e.g., malformed or non-existent IDs).
     customError.msg = `No item found with id : ${err.value}`
     customError.statusCode = 404
   }

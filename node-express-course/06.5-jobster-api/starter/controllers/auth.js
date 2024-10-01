@@ -15,10 +15,16 @@ const login = async (req, res) => {
     throw new BadRequestError('Please provide email and password')
   }
   const user = await User.findOne({ email })
+  // This line looks for a user in the database by their email using User.findOne().
+// If the user is not found, it throws an UnauthenticatedError (which results in a 401 Unauthorized status) 
+// with the message "Invalid Credentials".
   if (!user) {
     throw new UnauthenticatedError('Invalid Credentials')
   }
   const isPasswordCorrect = await user.comparePassword(password)
+  // The method user.comparePassword(password) (which was defined earlier in the User model) 
+  // compares the submitted plain text password with the hashed password stored in the database.
+// If the password is incorrect, it throws an UnauthenticatedError with the message "Invalid Credentials".
   if (!isPasswordCorrect) {
     throw new UnauthenticatedError('Invalid Credentials')
   }
